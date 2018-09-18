@@ -5,18 +5,17 @@ version: 0.1.0
 
 author: "Civalo"
 commands:
-   mycmd:
+   simpletag:
       description: This is a demo command. (no requirements)
+      alias: [stag]
       usage: /<command>
-      permission: <plugin name>.mycmd
-      permission-message: "You don't have <permission>"
-   mycmd2:
-      description: This is a demo command. (player only)
-      usage: /<command>
-      permission: <plugin name>.mycmd2
-      permission-message: "You don't have <permission>"
-   mycmd3:
-      description: This is a demo command. (1 argument)
-      usage: /<command> [Player]
-      permission: <plugin name>.mycmd3
-      permission-message: "You don't have <permission>"
+permissions:
+   simpletag.create:
+      description: Allows the use of start / end / kick commands to create and manage games.
+      default: op
+   simpletag.play:
+      description: Allows the use of join / leave comamnds to play existing games.
+      default: op
+   simpletag.admin:
+      description: Allows use of reload and endAll comamnds.
+      default: op

@@ -1,0 +1,22 @@
+name: SimpleTag
+main: com.civservers.simple_tag.simpletag.SimpleTag
+#com.example.plugins.MyPlugin
+version: 0.1.0
+
+author: "Civalo"
+commands:
+   mycmd:
+      description: This is a demo command. (no requirements)
+      usage: /<command>
+      permission: <plugin name>.mycmd
+      permission-message: "You don't have <permission>"
+   mycmd2:
+      description: This is a demo command. (player only)
+      usage: /<command>
+      permission: <plugin name>.mycmd2
+      permission-message: "You don't have <permission>"
+   mycmd3:
+      description: This is a demo command. (1 argument)
+      usage: /<command> [Player]
+      permission: <plugin name>.mycmd3
+      permission-message: "You don't have <permission>"

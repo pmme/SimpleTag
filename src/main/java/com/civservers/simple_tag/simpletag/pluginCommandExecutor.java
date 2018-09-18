@@ -28,13 +28,10 @@ public class pluginCommandExecutor implements CommandExecutor {
 	
 	@Override	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-		
-		
+
     	if (cmd.getName().equalsIgnoreCase("simpletag")) {
     		if (args.length < 1) {
-    			String reMsg[] = helpMsg;
-    			sender.sendMessage(reMsg);
+    			sender.sendMessage(helpMsg);
     			return false;
     		} else if (args[0].equalsIgnoreCase("reload")){
     			
@@ -46,8 +43,7 @@ public class pluginCommandExecutor implements CommandExecutor {
 //    			}
     			return true;
     		} else {
-    			String reMsg[] = helpMsg;
-    			sender.sendMessage(reMsg);
+    			sender.sendMessage(helpMsg);
         		return false;
     		}   		
     		

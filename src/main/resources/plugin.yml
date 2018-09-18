@@ -7,8 +7,8 @@ author: "Civalo"
 commands:
    simpletag:
       description: This is a demo command. (no requirements)
-      alias: [stag]
-      usage: /<command>
+      aliases: [stag]
+      usage: 
 permissions:
    simpletag.create:
       description: Allows the use of start / end / kick commands to create and manage games.

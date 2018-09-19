@@ -21,14 +21,60 @@ Aliases: /simpletag or /stag
 
 ## Default Config File
 
-    #prevent players from hurting each other while playing a game of tag.
-    cancelPVPDamage: true #
-    
-    #enable debugging output
-    debug: false 
+```
+	#------------------------------------------------------------------------------
+	#      SimpleTag by Civalo
+	#
+	# Spigot address: https://www.spigotmc.org/resources/simpletag.60986/
+	# Github: https://github.com/johnelder/SimpleTag
+	#
+	# License: GNU Lesser General Public License v3
+	#
+	#
+	#   cancelPVPDamage: true (Disables pvp for tag players when set to true)
+	#   tagSound: BLOCK_NOTE_BLOCK_CHIME (Played when a player gets tagged. See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html for options)
+	#   debug: false (Shows debug info in console when set to true)
+	#   messages: (Various messages to palyers duting game)
+	#      prefix: '[SimpleTag] '
+	#      no_console: 'Sorry, you must be a player to run this command.'
+	#      already_playing: 'You are already playing a game of tag!'
+	#      leave: 'You have left the game!'
+	#      stop: 'The game has stopped!'
+	#      no_game: 'Cannot find the game you requested.'
+	#      not_online: 'That player is not online!'
+	#      joined: 'You have joined the game!'
+	#      started: 'Your tag game has started! Invite players to join! /stag join <yourname>'
+	#      tagged: ' has been tagged!'
+	#      is_it: ' is now it!'
+	#      has_left: ' has left he game!'
+	#      no_perm: 'You need to have permission for that command!'
+	#      kicked: 'You have been kicked from the game of tag!'
+	#
+	#
+	#   
+	#
+	#------------------------------------------------------------------------------
+	
+	cancelPVPDamage: true
+	tagSound: BLOCK_NOTE_BLOCK_CHIME
+	debug: false
+	messages:
+	   prefix: '[SimpleTag] '
+	   no_console: 'Sorry, you must be a player to run this command.'
+	   already_playing: 'You are already playing a game of tag!'
+	   leave: 'You have left the game!'
+	   stop: 'The game has stopped!'
+	   no_game: 'Cannot find the game you requested.'
+	   not_online: 'That player is not online!'
+	   joined: 'You have joined the game!'
+	   started: 'Your tag game has started! Invite players to join! /stag join <yourname>'
+	   tagged: ' has been tagged!'
+	   is_it: ' is now it!'
+	   has_left: ' has left he game!'
+	   no_perm: 'You need to have permission for that command!'
+	   kicked: 'You have been kicked from the game of tag!'
+```
 
-	#sound played when someone gets tagged
-    tagSound: BLOCK_ANVIL_PLACE
 
 ## Support
 We try to be available whenever possible on Discord at [https://discord.gg/dYRcb3f](https://discord.gg/dYRcb3f)
@@ -37,8 +83,8 @@ We appreciate any contributions.
 - Please make submissions via pull requests on GitHub. 
 - Please licensed submissions under GNU Lesser General Public License v3.
 ## Links
-**Spigot Resource Listing:** Coming Soon
+**Spigot Resource Listing:** [https://www.spigotmc.org/resources/simpletag.60986/](https://www.spigotmc.org/resources/simpletag.60986/)
 
 **Issues:** [https://github.com/johnelder/SimpleTag/issues](https://github.com/johnelder/SimpleTag/issues)
 
-**Testing:** Join in game at pubcraft.civservers.com
+**Testing:** Join in game at techunlimitedgroup.com:25560 or pubcraft.civservers.com

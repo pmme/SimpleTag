@@ -3,13 +3,9 @@ package com.civservers.simple_tag.simpletag;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.ChatColor;
@@ -25,10 +21,14 @@ public class pluginCommandExecutor implements CommandExecutor {
 			ChatColor.RESET + "" + ChatColor.YELLOW + " /simpletag endall | reload"
 	};
 	
-	private String[] noConsole = {ChatColor.RED + "Sorry, you must be a player to run this command."};
-	
-	private String[] alreadyPlaying = {ChatColor.RED + "You are already playing a gam of tag!"};
-	
+	private String msg_noConsole = ChatColor.RED + "Sorry, you must be a player to run this command.";
+	private String msg_alreadyPlaying = ChatColor.RED + "You are already playing a game of tag!";
+	private String msg_leave = ChatColor.RED + "You have left the game!";
+	private String msg_stop = ChatColor.RED + "The game has stopped!";
+	private String msg_noGame = ChatColor.RED + "Cannot find the game you requested.";
+	private String msg_notOnline = ChatColor.RED + "That player is not online!";
+	private String msg_joined = ChatColor.GREEN + "You have joined the game!";
+	private String msg_started = ChatColor.GREEN + "Your tag game has started! Invite players to join! /stag join <yourname>";
 	
 	
 	public pluginCommandExecutor(SimpleTag plugin) {
@@ -50,7 +50,7 @@ public class pluginCommandExecutor implements CommandExecutor {
     				String uuid = player.getUniqueId().toString();
     				if (plugin.config.contains("games." + uuid) || plugin.isPlaying(uuid)) {
     					// player is already playing a game of tag.  Cannot create a new one.
-    					sender.sendMessage(alreadyPlaying);
+    					sender.sendMessage(msg_alreadyPlaying);
     					return false;
     				} else {
     					List<String> playerList = new ArrayList<String>();
@@ -60,31 +60,105 @@ public class pluginCommandExecutor implements CommandExecutor {
     					// set initial "it"
     					plugin.config.set("games." + uuid + ".it", uuid);
     					plugin.saveConfig();
+    					sender.sendMessage(msg_started);
     				}
     				
     			} else {
-    				sender.sendMessage(noConsole);
+    				sender.sendMessage(msg_noConsole);
     				return false;
     			}
+    			
+    			
+    			
+    			
+    			
     		} else if (args[0].equalsIgnoreCase("stop")){
     			if (sender instanceof Player) {
     				Player player = (Player) sender;
     				String uuid = player.getUniqueId().toString();
 	    			if (plugin.config.contains("games." + uuid)) {
-	    				//TODO: Send to each player in game
-	    				plugin.config.set("games." + uuid, null);
-	    				plugin.saveConfig();
+	    				plugin.sendGamePlayers(uuid, new String[] {msg_leave,msg_stop});
+	    				
+	    					plugin.config.set("games." + uuid, null);
+		    				plugin.saveConfig();
+	    				
+	    				
+	    				
 	    			}
     			}
-
-    		} else if (args[0].equalsIgnoreCase("reload")){
     			
-//    			boolean rStatus = plugin.reload();
-//    			if (rStatus) {
-//    				sender.sendMessage(ChatColor.GREEN + plugin.pluginName + " Reloaded!");
-//    			} else {
+    			
+    			
+    			
+    			
+    		} else if (args[0].equalsIgnoreCase("join")){
+    			String uuid = plugin.senderUUID(sender);
+    			if(plugin.isPlaying(uuid)) {
+    				sender.sendMessage(msg_alreadyPlaying);
+    			} else {
+    				String juuid = plugin.getOnlineUUID(args[1]);
+    				if (juuid.equals("not found")) {
+    					sender.sendMessage(msg_notOnline);
+    				} else {
+    					if (plugin.config.contains("games." + juuid)) {
+    						String gameUuid = plugin.findGame(juuid);
+    						plugin.debug(gameUuid);
+    						Player joining = (Player) sender;
+    						List<String> playerList = plugin.config.getStringList("games." + gameUuid + ".players");
+    						playerList.add(joining.getUniqueId().toString());
+    						plugin.config.set("games." + gameUuid + ".players", playerList);
+    						plugin.saveConfig();
+    						sender.sendMessage(msg_joined);
+    					} else {
+    						sender.sendMessage(msg_noGame);
+    					}
+    				}
+    				
+    				
+    				
+  
+    			}
+    			
+    			
+    			
+    			
+    			
+    			
+    			
+    			
+    			
+    		} else if (args[0].equalsIgnoreCase("leave")){
+    			Player player = (Player) sender;
+				String uuid = player.getUniqueId().toString();
+				if (plugin.isPlaying(uuid)) {
+					String gameUuid = plugin.findGame(uuid);
+					if (gameUuid != "") {
+						List<String> playerList = plugin.config.getStringList("games." + gameUuid + ".players");
+						playerList.remove(uuid);
+						plugin.config.set("games." + gameUuid + ".players", playerList);
+						plugin.saveConfig();
+						String[] sMsg = {ChatColor.BOLD + player.getDisplayName().toString() + " has left the tag game!"};
+    					plugin.sendGamePlayers(gameUuid, sMsg);
+					} else {
+						sender.sendMessage(msg_noGame);
+					}
+				}
+				
+				
+				
+				
+				
+				
+				
+				
+    		} else if (args[0].equalsIgnoreCase("reload")){
+//    			sender.sendMessage(ChatColor.RED + plugin.pluginName + " Reload command not activated!");
+    			boolean rStatus = plugin.reload();
+    			if (rStatus) {
+    				sender.sendMessage(ChatColor.GREEN + plugin.pluginName + " Reloaded!");
+    			} else {
     				sender.sendMessage(ChatColor.RED + plugin.pluginName + " Reload Failed!");
-//    			}
+    			}
     			return true;
     		} else {
     			sender.sendMessage(helpMsg);

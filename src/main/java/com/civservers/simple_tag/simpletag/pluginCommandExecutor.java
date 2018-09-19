@@ -133,35 +133,7 @@ public class pluginCommandExecutor implements CommandExecutor {
     			Player player = (Player) sender;
 				String uuid = player.getUniqueId().toString();
 				if (plugin.isPlaying(uuid)) {
-					String gameUuid = plugin.findGame(uuid);
-					if (gameUuid != "") {
-						List<String> playerList = plugin.config.getStringList("games." + gameUuid + ".players");
-						playerList.remove(uuid);    					
-						plugin.saveConfig();
-						sender.sendMessage(msg_leave);
-						
-    					if (playerList.isEmpty()) {
-    						plugin.config.set("games." + uuid, null);
-		    				plugin.saveConfig();
-		    				sender.sendMessage(msg_stop);
-    					} else {
-    						String[] sMsg = {ChatColor.BOLD + player.getDisplayName().toString() + " has left the tag game!"};
-    						plugin.sendGamePlayers(gameUuid, sMsg);
-    						plugin.config.set("games." + gameUuid + ".players", playerList);
-    						if (plugin.config.getString("games." + gameUuid + ".it").equals(uuid)) {
-        						Object[] stillPlaying = playerList.toArray();
-        						Player newIt = Bukkit.getPlayer(UUID.fromString(stillPlaying[0].toString()));
-        						plugin.config.set("games." + gameUuid + ".it", stillPlaying[0].toString());
-        						plugin.saveConfig();
-        						String[] rMsg = {newIt.getCustomName() + " is now it!"};
-        						plugin.sendGamePlayers(gameUuid,rMsg );
-        						plugin.soundGamePlayers(gameUuid);
-        					}	
-    					}
-    					
-					} else {
-						sender.sendMessage(msg_noGame);
-					}
+					plugin.leaveGame(uuid);
 				}
 				
 				

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.md_5.bungee.api.ChatColor;
@@ -72,30 +73,55 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     					config.set("games." + gameuuid_c + ".it", v_uuid);
     					saveConfig();
     				}
-    				
-    				
-    				
+
     	    		//Cancel damage
     	    		if ((boolean) config.get("cancelPVPDamage")) {
     	    			event.setCancelled(true);
     	    		}
     			}
     		}
-    		/*
-    		 * if culprit is it
-    		 * 		if victim is playing
-    		 * 			it = victim
-    		 * 			lastit = cuplrit
-    		 * 			restart tagback timer
-    		 * 
-    		 * 
-    		 * 
-    		 */
-    		
-    		
-    		
-
     	}
+    }
+    
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+    	Player quitter = event.getPlayer();
+    	String q_uuid = quitter.getUniqueId().toString();
+    	if (isPlaying(q_uuid)) {
+    		leaveGame(q_uuid);
+    	}
+    }
+    
+    public void leaveGame(String uuid) {
+		Player player = Bukkit.getPlayer(UUID.fromString(uuid));
+    	String gameUuid = findGame(uuid);    	
+		if (gameUuid != "") {
+			List<String> playerList = config.getStringList("games." + gameUuid + ".players");
+			playerList.remove(uuid);    					
+			saveConfig();
+			player.sendMessage(msg_leave);
+			
+			if (playerList.isEmpty()) {
+				config.set("games." + uuid, null);
+				saveConfig();
+				player.sendMessage(msg_stop);
+			} else {
+				String[] sMsg = {ChatColor.BOLD + player.getDisplayName().toString() + " has left the tag game!"};
+				sendGamePlayers(gameUuid, sMsg);
+				config.set("games." + gameUuid + ".players", playerList);
+				if (config.getString("games." + gameUuid + ".it").equals(uuid)) {
+					Object[] stillPlaying = playerList.toArray();
+					Player newIt = Bukkit.getPlayer(UUID.fromString(stillPlaying[0].toString()));
+					config.set("games." + gameUuid + ".it", stillPlaying[0].toString());
+					saveConfig();
+					String[] rMsg = {newIt.getCustomName() + " is now it!"};
+					sendGamePlayers(gameUuid,rMsg );
+					soundGamePlayers(gameUuid);
+				}	
+			}
+		} else {
+			player.sendMessage(msg_noGame);
+		}
     }
     
     public boolean isPlaying(String uuid) {
@@ -173,29 +199,5 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 		config = getConfig();	
 		return true;     
     }
-    
-    /*TODO:
-     * add permission checking
-     * !! remove players from tag game on disconnect
-     * !! set new 'it' player if it leaves
-     * 		rand number from 1 to length of playerList
-     * 		
-     * add effect for 'it' player?
-     * 
-     * scoreboard?
-     */
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
 

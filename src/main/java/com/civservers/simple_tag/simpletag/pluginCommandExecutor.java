@@ -2,7 +2,9 @@ package com.civservers.simple_tag.simpletag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -134,11 +136,29 @@ public class pluginCommandExecutor implements CommandExecutor {
 					String gameUuid = plugin.findGame(uuid);
 					if (gameUuid != "") {
 						List<String> playerList = plugin.config.getStringList("games." + gameUuid + ".players");
-						playerList.remove(uuid);
-						plugin.config.set("games." + gameUuid + ".players", playerList);
+						playerList.remove(uuid);    					
 						plugin.saveConfig();
-						String[] sMsg = {ChatColor.BOLD + player.getDisplayName().toString() + " has left the tag game!"};
-    					plugin.sendGamePlayers(gameUuid, sMsg);
+						sender.sendMessage(msg_leave);
+						
+    					if (playerList.isEmpty()) {
+    						plugin.config.set("games." + uuid, null);
+		    				plugin.saveConfig();
+		    				sender.sendMessage(msg_stop);
+    					} else {
+    						String[] sMsg = {ChatColor.BOLD + player.getDisplayName().toString() + " has left the tag game!"};
+    						plugin.sendGamePlayers(gameUuid, sMsg);
+    						plugin.config.set("games." + gameUuid + ".players", playerList);
+    						if (plugin.config.getString("games." + gameUuid + ".it").equals(uuid)) {
+        						Object[] stillPlaying = playerList.toArray();
+        						Player newIt = Bukkit.getPlayer(UUID.fromString(stillPlaying[0].toString()));
+        						plugin.config.set("games." + gameUuid + ".it", stillPlaying[0].toString());
+        						plugin.saveConfig();
+        						String[] rMsg = {newIt.getCustomName() + " is now it!"};
+        						plugin.sendGamePlayers(gameUuid,rMsg );
+        						plugin.soundGamePlayers(gameUuid);
+        					}	
+    					}
+    					
 					} else {
 						sender.sendMessage(msg_noGame);
 					}

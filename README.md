@@ -2,7 +2,7 @@
 # bukkit-SimpleTag
 **Description:** SimpleTag is a very simple, tag mini-game for bukkit/spigot minecraft servers.  In order to keep things simple, there are no arenas.  Players can start, stop, join and leave tag games anywhere in the server.  By default, the player that starts the game of tag has access to the admin commands for that game. *i.e. /stag kick JoeUser
 
-
+**Tested On:** Spigot 1.13.1
 
 ## Commands
 
@@ -21,7 +21,7 @@ Aliases: /simpletag or /stag
 
 ## Default Config File
 
-    #prevent players from hurting eachother while playing a game of tag.
+    #prevent players from hurting each other while playing a game of tag.
     cancelPVPDamage: true #
     
     #enable debugging output
@@ -37,6 +37,8 @@ We appreciate any contributions.
 - Please make submissions via pull requests on GitHub. 
 - Please licensed submissions under GNU Lesser General Public License v3.
 ## Links
-Spigot Resource Listing: Coming Soon
+**Spigot Resource Listing:** Coming Soon
 
-Issues: [https://github.com/johnelder/SimpleTag/issues](https://github.com/johnelder/SimpleTag/issues)
+**Issues:** [https://github.com/johnelder/SimpleTag/issues](https://github.com/johnelder/SimpleTag/issues)
+
+**Testing:** Join in game at pubcraft.civservers.com

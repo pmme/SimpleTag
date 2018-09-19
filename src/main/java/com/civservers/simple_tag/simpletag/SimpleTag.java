@@ -173,5 +173,29 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 		config = getConfig();	
 		return true;     
     }
+    
+    /*TODO:
+     * add permission checking
+     * !! remove players from tag game on disconnect
+     * !! set new 'it' player if it leaves
+     * 		rand number from 1 to length of playerList
+     * 		
+     * add effect for 'it' player?
+     * 
+     * scoreboard?
+     */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
 

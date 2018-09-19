@@ -38,4 +38,5 @@ We appreciate any contributions.
 - Please licensed submissions under GNU Lesser General Public License v3.
 ## Links
 Spigot Resource Listing: Coming Soon
+
 Issues: [https://github.com/johnelder/SimpleTag/issues](https://github.com/johnelder/SimpleTag/issues)

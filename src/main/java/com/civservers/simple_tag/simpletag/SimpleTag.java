@@ -4,10 +4,12 @@ package com.civservers.simple_tag.simpletag;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,7 +20,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.md_5.bungee.api.ChatColor;
 
 
 
@@ -26,23 +27,21 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 
 	public String pluginName = "SimpleTag";
 	public FileConfiguration config = getConfig();
+
+	public Map<String, Object> msgs = config.getConfigurationSection("messages").getValues(true);
+	
 	
 	
 	@Override
     public void onEnable() {
 		
-		config.addDefault("cancelPVPDamage", true);
-		config.addDefault("debug", true);
-		config.addDefault("tagSound", "BLOCK_NOTE_BLOCK_CHIME");
-		
 		config.options().copyDefaults(true);
 	    saveConfig();
-	    
 	    
 		this.getCommand("simpletag").setExecutor(new pluginCommandExecutor(this));
 		
 		Bukkit.getPluginManager().registerEvents(this, this);
-
+		reload();
     }
     
     @Override
@@ -67,9 +66,8 @@ public final class SimpleTag extends JavaPlugin implements Listener {
         		String gameuuid_c = findGame(c_uuid);
     			if (gameuuid_v.equals(gameuuid_c)) {
     				if (config.getString("games."+ gameuuid_c +".it").equals(c_uuid)) {
-    					String[] sMsg = {ChatColor.BOLD + victim.getDisplayName().toString() + " has been tagged!"};
     					soundGamePlayers(gameuuid_c);
-    					sendGamePlayers(gameuuid_c, sMsg);
+    					sendGamePlayers(gameuuid_c, ChatColor.GREEN.toString() + ChatColor.BOLD.toString() + victim.getDisplayName().toString() + msgs.get("tagged").toString());
     					config.set("games." + gameuuid_c + ".it", v_uuid);
     					saveConfig();
     				}
@@ -99,14 +97,15 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 			List<String> playerList = config.getStringList("games." + gameUuid + ".players");
 			playerList.remove(uuid);    					
 			saveConfig();
-			player.sendMessage(msg_leave);
+			sendPlayer(player,ChatColor.RED + msgs.get("leave").toString());
+			
 			
 			if (playerList.isEmpty()) {
 				config.set("games." + uuid, null);
 				saveConfig();
-				player.sendMessage(msg_stop);
+				sendPlayer(player,ChatColor.RED + msgs.get("stop").toString());
 			} else {
-				String[] sMsg = {ChatColor.BOLD + player.getDisplayName().toString() + " has left the tag game!"};
+				String sMsg = ChatColor.BOLD.toString() + ChatColor.RED.toString() + player.getDisplayName().toString() + msgs.get("has_left").toString();
 				sendGamePlayers(gameUuid, sMsg);
 				config.set("games." + gameUuid + ".players", playerList);
 				if (config.getString("games." + gameUuid + ".it").equals(uuid)) {
@@ -114,13 +113,14 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 					Player newIt = Bukkit.getPlayer(UUID.fromString(stillPlaying[0].toString()));
 					config.set("games." + gameUuid + ".it", stillPlaying[0].toString());
 					saveConfig();
-					String[] rMsg = {newIt.getCustomName() + " is now it!"};
-					sendGamePlayers(gameUuid,rMsg );
+					
+					sendGamePlayers(gameUuid,newIt.getCustomName() + msgs.get("is_it") );
 					soundGamePlayers(gameUuid);
 				}	
 			}
 		} else {
-			player.sendMessage(msg_noGame);
+			sendPlayer(player,ChatColor.RED + msgs.get("no_game").toString());
+			
 		}
     }
     
@@ -164,13 +164,17 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     		}
     	});
     }    
-    public void sendGamePlayers(String gameuuid, final String[] msg) {
+    public void sendGamePlayers(String gameuuid, final String msg) {
+    	debug(msg.toString());
     	List<String> playerList = config.getStringList("games." + gameuuid + ".players");
     	playerList.forEach(new Consumer<String>() {
     		public void accept(String playeruuid ) {
-    			Bukkit.getPlayer(UUID.fromString(playeruuid)).sendMessage(msg);
+    			sendPlayer(Bukkit.getPlayer(UUID.fromString(playeruuid)),msg);
     		}
     	});
+    }
+    public void sendPlayer(Player p, String msg) {
+    	p.sendMessage(ChatColor.YELLOW + msgs.get("prefix").toString() + msg);
     }
     public String senderUUID(CommandSender sender) {
     	Player player = (Player) sender;
@@ -196,7 +200,8 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     }
     public boolean reload() {
 		reloadConfig();
-		config = getConfig();	
+		config = getConfig();
+		msgs = config.getConfigurationSection("messages").getValues(true);
 		return true;     
     }
 }

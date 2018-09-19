@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -87,6 +88,29 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     	String q_uuid = quitter.getUniqueId().toString();
     	if (isPlaying(q_uuid)) {
     		leaveGame(q_uuid);
+    	}
+    }
+    
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent e) {
+    	Player player = e.getPlayer();
+    	if (!player.isOp() && isPlaying(player.getUniqueId().toString())) {
+	    	if (config.getBoolean("blockCommands")) {
+	    		String cmd = "";
+		    	List<String> allowedCommands = config.getStringList("allowedCommands");
+		    	allowedCommands.add("simplettag");
+		    	allowedCommands.add("stag");
+		    	if (e.getMessage().indexOf(" ") >= 0) {
+		    		cmd = e.getMessage().substring(1, e.getMessage().indexOf(" "));
+		    	} else {
+		    		cmd = e.getMessage().substring(1, e.getMessage().length());
+		    	}
+		    	
+		    	if (!allowedCommands.contains(cmd)) {
+		    		sendPlayer(player, ChatColor.RED + msgs.get("no_cmds").toString());
+		    		e.setCancelled(true);
+		    	}
+	    	}
     	}
     }
     

@@ -34,6 +34,13 @@
 cancelPVPDamage: true
 tagSound: BLOCK_NOTE_BLOCK_CHIME
 debug: false
+setSurvival: true
+disableFly: true
+blockCommands: true
+allowedCommands:
+- me
+- help
+- msg
 messages:
    prefix: '[SimpleTag] '
    no_console: 'Sorry, you must be a player to run this command.'
@@ -49,3 +56,4 @@ messages:
    has_left: ' has left he game!'
    no_perm: 'You need to have permission for that command!'
    kicked: 'You have been kicked from the game of tag!'
+   no_cmds: 'You cannot use othet commands until you leave the tag game!'

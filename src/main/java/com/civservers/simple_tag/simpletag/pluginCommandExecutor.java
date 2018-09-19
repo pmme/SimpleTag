@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -44,6 +45,9 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    			return false;
 	    		} else if (args[0].equalsIgnoreCase("test")){
 	    			plugin.debug(player.getDisplayName().toString());
+	    			
+	    			
+	    			
 	    		} else if (args[0].equalsIgnoreCase("start")){
 	    			if (sender.hasPermission("simpletag.create")) {
 	    				if (plugin.config.contains("games." + uuid) || plugin.isPlaying(uuid)) {
@@ -59,10 +63,19 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    					plugin.config.set("games." + uuid + ".it", uuid);
 	    					plugin.saveConfig();
 	    					plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("started").toString());
+	    					if (plugin.config.getBoolean("setSurvival")) {
+	    						player.setGameMode(GameMode.SURVIVAL);
+	    					}
+	    					if (plugin.config.getBoolean("disableFly")) {
+	    						player.setFlying(false);
+	    					}
 	    				}
 	    			} else {
 	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
 	    			}
+	    			
+	    			
+	    			
 	    		} else if (args[0].equalsIgnoreCase("stop")){
 	    			if (sender.hasPermission("simpletag.create")) {
 		    			if (plugin.config.contains("games." + uuid)) {
@@ -74,6 +87,9 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    			} else {
 	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
 	    			}
+	    			
+	    			
+	    			
 	    		} else if (args[0].equalsIgnoreCase("kick")){
 	    			plugin.debug("Starting kick script:");
 	    			if (sender.hasPermission("simpletag.create")) {
@@ -86,6 +102,9 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    			} else {
 	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
 	    			}
+	    			
+	    			
+	    			
 	    		} else if (args[0].equalsIgnoreCase("join")){
 	    			if (sender.hasPermission("simpletag.play")) {
 		    			if(plugin.isPlaying(uuid)) {
@@ -104,6 +123,12 @@ public class pluginCommandExecutor implements CommandExecutor {
 		    						plugin.config.set("games." + gameUuid + ".players", playerList);
 		    						plugin.saveConfig();
 		    						plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("joined").toString());
+			    					if (plugin.config.getBoolean("setSurvival")) {
+			    						player.setGameMode(GameMode.SURVIVAL);
+			    					}
+			    					if (plugin.config.getBoolean("disableFly")) {
+			    						player.setFlying(false);
+			    					}
 		    					} else {
 		    						plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_game").toString());
 		    					}

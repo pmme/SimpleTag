@@ -27,3 +27,4 @@ messages:
    no_perm: 'You need to have permission for that command!'
    kicked: 'You have been kicked from the game of tag!'
    no_cmds: 'You cannot use othet commands until you leave the tag game!'
+   more_args: 'you must specify a player (/stag join JoePlayer)'

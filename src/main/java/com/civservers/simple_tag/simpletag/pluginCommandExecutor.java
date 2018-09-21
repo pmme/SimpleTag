@@ -91,49 +91,55 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    			
 	    			
 	    		} else if (args[0].equalsIgnoreCase("kick")){
-	    			plugin.debug("Starting kick script:");
-	    			if (sender.hasPermission("simpletag.create")) {
-	    				String t_uuid = plugin.getOnlineUUID(args[1]);
-	    				plugin.debug(t_uuid);
-						if (plugin.isPlaying(t_uuid)) {
-							plugin.leaveGame(t_uuid);
-							plugin.sendPlayer(Bukkit.getPlayer(UUID.fromString(t_uuid)),ChatColor.RED + plugin.msgs.get("kicked").toString());
-						}
+	    			if (args.length > 1) {
+		    			if (sender.hasPermission("simpletag.create")) {
+		    				String t_uuid = plugin.getOnlineUUID(args[1]);
+		    				plugin.debug(t_uuid);
+							if (plugin.isPlaying(t_uuid)) {
+								plugin.leaveGame(t_uuid);
+								plugin.sendPlayer(Bukkit.getPlayer(UUID.fromString(t_uuid)),ChatColor.RED + plugin.msgs.get("kicked").toString());
+							}
+		    			} else {
+		    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
+		    			}
 	    			} else {
-	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
-	    			}
-	    			
+    					plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("more_args").toString());
+    				}
 	    			
 	    			
 	    		} else if (args[0].equalsIgnoreCase("join")){
 	    			if (sender.hasPermission("simpletag.play")) {
-		    			if(plugin.isPlaying(uuid)) {
-		    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("already_playing").toString());
-		    			} else {
-		    				String juuid = plugin.getOnlineUUID(args[1]);
-		    				if (juuid.equals("not found")) {
-		    					plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("not_online").toString());
-		    				} else {
-		    					if (plugin.config.contains("games." + juuid)) {
-		    						String gameUuid = plugin.findGame(juuid);
-		    						plugin.debug(gameUuid);
-		    						Player joining = player;
-		    						List<String> playerList = plugin.config.getStringList("games." + gameUuid + ".players");
-		    						playerList.add(joining.getUniqueId().toString());
-		    						plugin.config.set("games." + gameUuid + ".players", playerList);
-		    						plugin.saveConfig();
-		    						plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("joined").toString());
-			    					if (plugin.config.getBoolean("setSurvival")) {
-			    						player.setGameMode(GameMode.SURVIVAL);
+	    				if (args.length > 1) {
+			    			if(plugin.isPlaying(uuid)) {
+			    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("already_playing").toString());
+			    			} else {
+			    				String juuid = plugin.getOnlineUUID(args[1]);
+			    				if (juuid.equals("not found")) {
+			    					plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("not_online").toString());
+			    				} else {
+			    					if (plugin.config.contains("games." + juuid)) {
+			    						String gameUuid = plugin.findGame(juuid);
+			    						plugin.debug(gameUuid);
+			    						Player joining = player;
+			    						List<String> playerList = plugin.config.getStringList("games." + gameUuid + ".players");
+			    						playerList.add(joining.getUniqueId().toString());
+			    						plugin.config.set("games." + gameUuid + ".players", playerList);
+			    						plugin.saveConfig();
+			    						plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("joined").toString());
+				    					if (plugin.config.getBoolean("setSurvival")) {
+				    						player.setGameMode(GameMode.SURVIVAL);
+				    					}
+				    					if (plugin.config.getBoolean("disableFly")) {
+				    						player.setFlying(false);
+				    					}
+			    					} else {
+			    						plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_game").toString());
 			    					}
-			    					if (plugin.config.getBoolean("disableFly")) {
-			    						player.setFlying(false);
-			    					}
-		    					} else {
-		    						plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_game").toString());
-		    					}
-		    				}
-		    			}
+			    				}
+			    			}
+	    				} else {
+	    					plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("more_args").toString());
+	    				}
 	    			} else {
 	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
 	    			}

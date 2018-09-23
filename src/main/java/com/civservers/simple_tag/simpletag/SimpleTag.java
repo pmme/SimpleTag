@@ -28,7 +28,6 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 
 	public String pluginName = "SimpleTag";
 	public FileConfiguration config = getConfig();
-
 	public Map<String, Object> msgs = config.getConfigurationSection("messages").getValues(true);
 	
 	
@@ -138,7 +137,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 					config.set("games." + gameUuid + ".it", stillPlaying[0].toString());
 					saveConfig();
 					
-					sendGamePlayers(gameUuid,newIt.getCustomName() + msgs.get("is_it") );
+					sendGamePlayers(gameUuid,newIt.getCustomName().toString() + msgs.get("is_it") );
 					soundGamePlayers(gameUuid);
 				}	
 			}

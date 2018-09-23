@@ -25,10 +25,6 @@ public class pluginCommandExecutor implements CommandExecutor {
 			ChatColor.RESET + "" + ChatColor.YELLOW + " /simpletag reload"
 	};
 	
-
-
-	
-	
 	public pluginCommandExecutor(SimpleTag plugin) {
 		this.plugin = plugin;
 	}

@@ -124,7 +124,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 			
 			
 			if (playerList.isEmpty()) {
-				config.set("games." + uuid, null);
+				config.set("games." + gameUuid, null);
 				saveConfig();
 				sendPlayer(player,ChatColor.RED + msgs.get("stop").toString());
 			} else {

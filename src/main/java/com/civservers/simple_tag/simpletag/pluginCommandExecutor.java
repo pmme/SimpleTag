@@ -59,10 +59,10 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    					plugin.config.set("games." + uuid + ".it", uuid);
 	    					plugin.saveConfig();
 	    					plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("started").toString());
-	    					if (plugin.config.getBoolean("setSurvival")) {
+	    					if (plugin.getConfig().getBoolean("setSurvival")) {
 	    						player.setGameMode(GameMode.SURVIVAL);
 	    					}
-	    					if (plugin.config.getBoolean("disableFly")) {
+	    					if (plugin.getConfig().getBoolean("disableFly")) {
 	    						player.setFlying(false);
 	    					}
 	    				}
@@ -122,10 +122,10 @@ public class pluginCommandExecutor implements CommandExecutor {
 			    						plugin.config.set("games." + gameUuid + ".players", playerList);
 			    						plugin.saveConfig();
 			    						plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("joined").toString());
-				    					if (plugin.config.getBoolean("setSurvival")) {
+				    					if (plugin.getConfig().getBoolean("setSurvival")) {
 				    						player.setGameMode(GameMode.SURVIVAL);
 				    					}
-				    					if (plugin.config.getBoolean("disableFly")) {
+				    					if (plugin.getConfig().getBoolean("disableFly")) {
 				    						player.setFlying(false);
 				    					}
 			    					} else {

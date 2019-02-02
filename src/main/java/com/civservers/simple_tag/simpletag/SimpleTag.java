@@ -27,15 +27,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class SimpleTag extends JavaPlugin implements Listener {
 
 	public String pluginName = "SimpleTag";
-	public FileConfiguration config = getConfig();
-	public Map<String, Object> msgs = config.getConfigurationSection("messages").getValues(true);
+	public Map<String, Object> msgs = getConfig().getConfigurationSection("messages").getValues(true);
 	
 	
 	
 	@Override
     public void onEnable() {
-		
-		config.options().copyDefaults(true);
+
+		getConfig().options().copyDefaults(true);
 	    saveConfig();
 	    
 		this.getCommand("simpletag").setExecutor(new pluginCommandExecutor(this));
@@ -73,7 +72,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     				}
 
     	    		//Cancel damage
-    	    		if ((boolean) config.get("cancelPVPDamage")) {
+    	    		if ((boolean) getConfig().get("cancelPVPDamage")) {
     	    			event.setCancelled(true);
     	    		}
     			}
@@ -94,9 +93,9 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     public void onCommand(PlayerCommandPreprocessEvent e) {
     	Player player = e.getPlayer();
     	if (!player.isOp() && isPlaying(player.getUniqueId().toString())) {
-	    	if (config.getBoolean("blockCommands")) {
+	    	if (getConfig().getBoolean("blockCommands")) {
 	    		String cmd = "";
-		    	List<String> allowedCommands = config.getStringList("allowedCommands");
+		    	List<String> allowedCommands = getConfig().getStringList("allowedCommands");
 		    	allowedCommands.add("simplettag");
 		    	allowedCommands.add("stag");
 		    	if (e.getMessage().indexOf(" ") >= 0) {
@@ -183,7 +182,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     	playerList.forEach(new Consumer<String>() {
     		public void accept(String playeruuid ) {
     			Player cPlayer = Bukkit.getPlayer(UUID.fromString(playeruuid));
-    			cPlayer.playSound(cPlayer.getLocation(), Sound.valueOf(config.getString("tagSound")), 3f, 1f);
+    			cPlayer.playSound(cPlayer.getLocation(), Sound.valueOf(getConfig().getString("tagSound")), 3f, 1f);
     		}
     	});
     }    
@@ -217,14 +216,13 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     	
     }
     public void debug(String dString) {
-    	if (config.getBoolean("debug")) {
+    	if (getConfig().getBoolean("debug")) {
     		Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "["+pluginName+" DEBUG]" + " " + dString);
     	}
     }
     public boolean reload() {
 		reloadConfig();
-		config = getConfig();
-		msgs = config.getConfigurationSection("messages").getValues(true);
+		msgs = getConfig().getConfigurationSection("messages").getValues(true);
 		return true;     
     }
 }

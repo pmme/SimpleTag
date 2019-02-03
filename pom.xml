@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.civservers.simple_tag</groupId>
   <artifactId>SimpleTag</artifactId>
-  <version>0.1.1c-SNAPSHOT</version>
+  <version>1.0</version>
   <build>
       <plugins>
           <plugin>

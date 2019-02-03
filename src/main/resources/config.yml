@@ -19,7 +19,7 @@ messages:
    stop: 'The game has stopped!'
    no_game: 'Cannot find the game you requested.'
    not_online: 'That player is not online!'
-   joined: 'You have joined the game!'
+   joined: ' has joined the game!'
    started: 'Your tag game has started! Invite players to join! /stag join <yourname>'
    tagged: ' has been tagged!'
    is_it: ' is now it!'
@@ -28,3 +28,4 @@ messages:
    kicked: 'You have been kicked from the game of tag!'
    no_cmds: 'You cannot use other commands until you leave the tag game!'
    more_args: 'You must specify a player (/stag join JoePlayer)'
+   not_in_game: 'You are not in a game of tag'

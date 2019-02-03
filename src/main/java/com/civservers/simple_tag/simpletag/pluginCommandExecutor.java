@@ -1,18 +1,13 @@
 package com.civservers.simple_tag.simpletag;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-
 
 public class pluginCommandExecutor implements CommandExecutor {
 	private final SimpleTag plugin;
@@ -35,29 +30,19 @@ public class pluginCommandExecutor implements CommandExecutor {
     	if (cmd.getName().equalsIgnoreCase("simpletag")) {
     		if (sender instanceof Player) {
     			Player player = (Player) sender;
-    			String uuid = player.getUniqueId().toString();
+    			UUID playerId = player.getUniqueId();
 	    		if (args.length < 1) {
 	    			player.sendMessage(helpMsg);
-	    			return false;
 	    		} else if (args[0].equalsIgnoreCase("test")){
 	    			plugin.debug(player.getDisplayName().toString());
-	    			
-	    			
-	    			
 	    		} else if (args[0].equalsIgnoreCase("start")){
 	    			if (sender.hasPermission("simpletag.create")) {
-	    				if (plugin.config.contains("games." + uuid) || plugin.isPlaying(uuid)) {
+	    				if (plugin.isPlaying(playerId)) {
 	    					// player is already playing a game of tag.  Cannot create a new one.
 	    					plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("already_playing").toString());
-	    					return false;
 	    				} else {
 	    					// create game and player list
-	    					List<String> playerList = new ArrayList<String>();
-	    					playerList.add(uuid);
-	    					plugin.config.set("games." + uuid + ".players", playerList);
-	    					// set initial "it"
-	    					plugin.config.set("games." + uuid + ".it", uuid);
-	    					plugin.saveConfig();
+							plugin.newGame(player);
 	    					plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("started").toString());
 	    					if (plugin.getConfig().getBoolean("setSurvival")) {
 	    						player.setGameMode(GameMode.SURVIVAL);
@@ -69,31 +54,27 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    			} else {
 	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
 	    			}
-	    			
-	    			
-	    			
 	    		} else if (args[0].equalsIgnoreCase("stop")){
 	    			if (sender.hasPermission("simpletag.create")) {
-		    			if (plugin.config.contains("games." + uuid)) {
-		    				plugin.sendGamePlayers(uuid, ChatColor.RED + plugin.msgs.get("leave").toString());
-		    				plugin.sendGamePlayers(uuid, ChatColor.RED + plugin.msgs.get("stop").toString());
-	    					plugin.config.set("games." + uuid, null);
-		    				plugin.saveConfig();
-		    			}
+	    				Game game = plugin.findGame(playerId);
+	    				if(game != null) {
+	    					game.stopGame();
+						} else {
+							plugin.sendPlayer(player,ChatColor.RED + plugin.msgs.get("not_in_game").toString());
+						}
 	    			} else {
 	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
 	    			}
-	    			
-	    			
-	    			
 	    		} else if (args[0].equalsIgnoreCase("kick")){
 	    			if (args.length > 1) {
 		    			if (sender.hasPermission("simpletag.create")) {
-		    				String t_uuid = plugin.getOnlineUUID(args[1]);
-		    				plugin.debug(t_uuid);
-							if (plugin.isPlaying(t_uuid)) {
-								plugin.leaveGame(t_uuid);
-								plugin.sendPlayer(Bukkit.getPlayer(UUID.fromString(t_uuid)),ChatColor.RED + plugin.msgs.get("kicked").toString());
+		    				Game game = plugin.findGame(playerId);
+		    				if(game != null) {
+								Player playerToKick = plugin.getOnlinePlayer(args[1]);
+								plugin.leaveGame(playerToKick);
+								plugin.sendPlayer(playerToKick,ChatColor.RED + plugin.msgs.get("kicked").toString());
+							} else {
+								plugin.sendPlayer(player,ChatColor.RED + plugin.msgs.get("not_in_game").toString());
 							}
 		    			} else {
 		    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
@@ -101,36 +82,26 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    			} else {
     					plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("more_args").toString());
     				}
-	    			
-	    			
 	    		} else if (args[0].equalsIgnoreCase("join")){
 	    			if (sender.hasPermission("simpletag.play")) {
 	    				if (args.length > 1) {
-			    			if(plugin.isPlaying(uuid)) {
+			    			if(plugin.isPlaying(playerId)) {
 			    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("already_playing").toString());
 			    			} else {
-			    				String juuid = plugin.getOnlineUUID(args[1]);
-			    				if (juuid.equals("not found")) {
-			    					plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("not_online").toString());
+			    				Game game = plugin.findGame(ChatColor.stripColor(args[1]).toLowerCase());
+			    				if (game == null) {
+									plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_game").toString());
 			    				} else {
-			    					if (plugin.config.contains("games." + juuid)) {
-			    						String gameUuid = plugin.findGame(juuid);
-			    						plugin.debug(gameUuid);
-			    						Player joining = player;
-			    						List<String> playerList = plugin.config.getStringList("games." + gameUuid + ".players");
-			    						playerList.add(joining.getUniqueId().toString());
-			    						plugin.config.set("games." + gameUuid + ".players", playerList);
-			    						plugin.saveConfig();
-			    						plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("joined").toString());
-				    					if (plugin.getConfig().getBoolean("setSurvival")) {
-				    						player.setGameMode(GameMode.SURVIVAL);
-				    					}
-				    					if (plugin.getConfig().getBoolean("disableFly")) {
-				    						player.setFlying(false);
-				    					}
-			    					} else {
-			    						plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_game").toString());
-			    					}
+									plugin.debug(game.id);
+									game.addPlayer(playerId);
+									plugin.addPlayersGameEntry(playerId,game.id);
+									game.sendGamePlayers(ChatColor.GREEN + player.getDisplayName() + plugin.msgs.get("joined").toString());
+									if (plugin.getConfig().getBoolean("setSurvival")) {
+										player.setGameMode(GameMode.SURVIVAL);
+									}
+									if (plugin.getConfig().getBoolean("disableFly")) {
+										player.setFlying(false);
+									}
 			    				}
 			    			}
 	    				} else {
@@ -141,14 +112,9 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    			}
 	    		} else if (args[0].equalsIgnoreCase("leave")){
 	    			if (sender.hasPermission("simpletag.play")) {
-						
-						if (plugin.isPlaying(uuid)) {
-							plugin.leaveGame(uuid);
-						}
-						
+						plugin.leaveGame(player);
 	    			} else {
 	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
-	    				return false;
 	    			}
 	    		} else if (args[0].equalsIgnoreCase("reload")){
 	    			if (sender.hasPermission("simpletag.admin")) {
@@ -158,22 +124,16 @@ public class pluginCommandExecutor implements CommandExecutor {
 		    			} else {
 		    				sender.sendMessage(ChatColor.RED + plugin.pluginName + " Reload Failed!");
 		    			}
-		    			return true;
 	    			} else {
 	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
-	    				return false;
 	    			}
 	    		} else {
 	    			sender.sendMessage(helpMsg);
-	        		return false;
 	    		}
     		} else {
     			sender.sendMessage(ChatColor.RED + plugin.msgs.get("no_console").toString());
-    			return false;
     		}
-    	} else {
-    		return false;
     	}
-		return false;
+		return true;
 	}
 }

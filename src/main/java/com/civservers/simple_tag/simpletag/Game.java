@@ -24,7 +24,7 @@ public class Game
 
     public Game(SimpleTag plugin, Player player) {
         this.plugin = plugin;
-        this.id = ChatColor.stripColor(player.getDisplayName());
+        this.id = ChatColor.stripColor(player.getDisplayName().toLowerCase());
         this.it = player.getUniqueId();
         playerList.add(this.it);
     }

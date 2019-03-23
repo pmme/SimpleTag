@@ -110,7 +110,11 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 			this.removePlayersGameEntry(player.getUniqueId());
 			sendPlayer(player,ChatColor.RED + msgs.get("leave").toString());
 
-			if (game.playerList.isEmpty()) {
+			if (game.starter == playerId) {
+				String sMsg = ChatColor.BOLD.toString() + ChatColor.RED.toString() + player.getDisplayName() + msgs.get("has_left").toString();
+				game.sendGamePlayers(sMsg);
+				game.stopGame();
+			} else if (game.playerList.isEmpty()) {
 				sendPlayer(player,ChatColor.RED + msgs.get("stop").toString());
 				game.stopGame();
 			} else {

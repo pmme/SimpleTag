@@ -44,7 +44,11 @@ public class pluginCommandExecutor implements CommandExecutor {
 							} else {
 								// create game and player list
 								plugin.newGame(player, args[1]);
-								plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("started").toString().replace("%game%",args[1]));
+								if (plugin.getConfig().getBoolean("broadcastGameStart")) {
+									plugin.getServer().broadcastMessage(ChatColor.YELLOW + plugin.msgs.get("prefix").toString() + ChatColor.GREEN + plugin.msgs.get("started_broadcast").toString().replace("%player%",player.getDisplayName()).replace("%game%",args[1]));
+								} else {
+									plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("started").toString().replace("%game%",args[1]));
+								}
 								if (plugin.getConfig().getBoolean("setSurvival")) {
 									player.setGameMode(GameMode.SURVIVAL);
 								}

@@ -6,6 +6,7 @@ tagSound: BLOCK_NOTE_BLOCK_CHIME
 debug: false
 setSurvival: true
 disableFly: true
+broadcastGameStart: true
 blockCommands: true
 allowedCommands:
 - me
@@ -21,6 +22,7 @@ messages:
    not_online: 'That player is not online!'
    joined: ' has joined the game!'
    started: 'Your tag game has started! Invite players to join! /stag join %game%'
+   started_broadcast: '%player% has started a game of tag! Join with /stag join %game%'
    tagged: ' has been tagged!'
    is_it: ' is now it!'
    has_left: ' has left the game!'

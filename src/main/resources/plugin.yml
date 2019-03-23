@@ -1,7 +1,6 @@
 name: SimpleTag
 main: com.civservers.simple_tag.simpletag.SimpleTag
-#com.example.plugins.MyPlugin
-version: 0.1.1c
+version: 1.2
 
 author: "Civalo"
 commands:

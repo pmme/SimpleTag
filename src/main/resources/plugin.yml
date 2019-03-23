@@ -11,7 +11,7 @@ commands:
       usage: 
 permissions:
    simpletag.create:
-      description: Allows the use of start / end / kick commands to create and manage games.
+      description: Allows the use of start / stop / kick commands to create and manage games.
       default: op
    simpletag.play:
       description: Allows the use of join / leave comamnds to play existing games.

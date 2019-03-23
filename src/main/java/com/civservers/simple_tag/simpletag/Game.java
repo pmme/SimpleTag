@@ -13,20 +13,17 @@ public class Game
 {
     private final SimpleTag plugin;
 
-    String id;
+    String name;
+    UUID starter;
     List<UUID> playerList = new ArrayList<>();
     UUID it;
 
-    public Game(SimpleTag plugin, String id) {
+    public Game(SimpleTag plugin, Player player, String gameName) {
         this.plugin = plugin;
-        this.id = id;
-    }
-
-    public Game(SimpleTag plugin, Player player) {
-        this.plugin = plugin;
-        this.id = ChatColor.stripColor(player.getDisplayName().toLowerCase());
-        this.it = player.getUniqueId();
-        playerList.add(this.it);
+        this.name = gameName;
+        this.starter = player.getUniqueId();
+        this.it = this.starter;
+        playerList.add(this.starter);
     }
 
     public boolean isIt(UUID playerId) {
@@ -66,7 +63,7 @@ public class Game
                 plugin.removePlayersGameEntry(playerId);
             }
         }
-        plugin.games.remove(this.id);
+        plugin.games.remove(this.name);
     }
 
     public void soundGamePlayers()

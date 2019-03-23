@@ -94,11 +94,11 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     	}
     }
 
-    public Game newGame(Player player) {
+    public Game newGame(Player player, String gameName) {
 		UUID playerId = player.getUniqueId();
-		Game game = new Game(this, player);
-		games.put(game.id, game);
-		this.playersInGames.put(playerId, game.id);
+		Game game = new Game(this, player, gameName);
+		games.put(game.name, game);
+		this.playersInGames.put(playerId, game.name);
 		return game;
 	}
     
@@ -187,6 +187,8 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     public boolean reload() {
 		reloadConfig();
 		loadConfig();
+		playersInGames.clear();
+		games.clear();
 		return true;     
     }
 

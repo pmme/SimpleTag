@@ -8,16 +8,16 @@
 
 Aliases: /simpletag or /stag
  - /stag reload	-	Reloads the configuration file.
- - /stag start	-	Starts a new game of tag with you as the game owner/admin.
+ - /stag start [gameName]	-	Starts a new game of tag with you as the game owner/admin.
  - /stag stop	-	Stops your running game of tag if you have one.
- - /stag join [playerName]	-	Joins a game that another player is playing.
+ - /stag join [gameName]	-	Joins a game that another player is playing.
  - /stag leave - Leave the tag game that you are in.
 
 ## Permissions
 
  - simpletag.create - Allows the use of start / end / kick commands to create and manage games.
--  simpletag.play - Allows the use of join / leave commands to play existing games.
-- simpletag.admin - Allows use of reload and endAll commands.
+ - simpletag.play - Allows the use of join / leave commands to play existing games.
+ - simpletag.admin - Allows use of reload and endAll commands.
 
 ## Default Config File
 
@@ -43,16 +43,17 @@ Aliases: /simpletag or /stag
 	#      no_game: 'Cannot find the game you requested.'
 	#      not_online: 'That player is not online!'
 	#      joined: 'You have joined the game!'
-	#      started: 'Your tag game has started! Invite players to join! /stag join <yourname>'
+	#      started: 'Your tag game has started! Invite players to join! /stag join %game%'
 	#      tagged: ' has been tagged!'
 	#      is_it: ' is now it!'
-	#      has_left: ' has left he game!'
+	#      has_left: ' has left the game!'
 	#      no_perm: 'You need to have permission for that command!'
 	#      kicked: 'You have been kicked from the game of tag!'
-	#
-	#
-	#   
-	#
+	#      no_cmds: 'You cannot use other commands until you leave the tag game!'
+	#      need_game: 'You must specify a game (e.g. /stag start JoesGame, or /stag join JoesGame)'
+	#      need_player: 'You must specify a player (e.g. /stag kick Joe)'
+	#      not_in_game: 'You are not in a game of tag'
+	#      not_starter: 'You must have started the game to use that command'
 	#------------------------------------------------------------------------------
 	
 	cancelPVPDamage: true
@@ -67,12 +68,17 @@ Aliases: /simpletag or /stag
 	   no_game: 'Cannot find the game you requested.'
 	   not_online: 'That player is not online!'
 	   joined: 'You have joined the game!'
-	   started: 'Your tag game has started! Invite players to join! /stag join <yourname>'
+	   started: 'Your tag game has started! Invite players to join! /stag join %game%'
 	   tagged: ' has been tagged!'
 	   is_it: ' is now it!'
-	   has_left: ' has left he game!'
+	   has_left: ' has left the game!'
 	   no_perm: 'You need to have permission for that command!'
 	   kicked: 'You have been kicked from the game of tag!'
+	   no_cmds: 'You cannot use other commands until you leave the tag game!'
+	   need_game: 'You must specify a game (e.g. /stag start JoesGame, or /stag join JoesGame)'
+	   need_player: 'You must specify a player (e.g. /stag kick Joe)'
+	   not_in_game: 'You are not in a game of tag'
+	   not_starter: 'You must have started the game to use that command'
 ```
 
 

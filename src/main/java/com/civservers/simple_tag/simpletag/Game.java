@@ -59,7 +59,7 @@ public class Game
         for(UUID playerId : playerList) {
             Player player = plugin.getServer().getPlayer(playerId);
             if(player != null) {
-                plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("stop").toString());
+                plugin.sendPlayer(player, plugin.msgs.get("stop").toString());
                 plugin.removePlayersGameEntry(playerId);
             }
         }

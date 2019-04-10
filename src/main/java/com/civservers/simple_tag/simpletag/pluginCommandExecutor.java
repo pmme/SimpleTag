@@ -40,14 +40,14 @@ public class pluginCommandExecutor implements CommandExecutor {
 						if (args.length > 1) {
 							if (plugin.isPlaying(playerId)) {
 								// player is already playing a game of tag.  Cannot create a new one.
-								plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("already_playing").toString());
+								plugin.sendPlayer(player, plugin.msgs.get("already_playing").toString());
 							} else {
 								// create game and player list
 								plugin.newGame(player, args[1]);
 								if (plugin.getConfig().getBoolean("broadcastGameStart")) {
-									plugin.getServer().broadcastMessage(ChatColor.YELLOW + plugin.msgs.get("prefix").toString() + ChatColor.GREEN + plugin.msgs.get("started_broadcast").toString().replace("%player%",player.getDisplayName()).replace("%game%",args[1]));
+									plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&',plugin.msgs.get("prefix").toString() + plugin.msgs.get("started_broadcast").toString().replace("%player%",player.getDisplayName()).replace("%game%",args[1])));
 								} else {
-									plugin.sendPlayer(player, ChatColor.GREEN + plugin.msgs.get("started").toString().replace("%game%",args[1]));
+									plugin.sendPlayer(player, plugin.msgs.get("started").toString().replace("%game%",args[1]));
 								}
 								if (plugin.getConfig().getBoolean("setSurvival")) {
 									player.setGameMode(GameMode.SURVIVAL);
@@ -57,10 +57,10 @@ public class pluginCommandExecutor implements CommandExecutor {
 								}
 							}
 						} else {
-							plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("need_game").toString());
+							plugin.sendPlayer(player, plugin.msgs.get("need_game").toString());
 						}
 					} else {
-						plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
+						plugin.sendPlayer(player, plugin.msgs.get("no_perm").toString());
 					}
 				} else if (args[0].equalsIgnoreCase("stop")){
 	    			if (sender.hasPermission("simpletag.create")) {
@@ -69,13 +69,13 @@ public class pluginCommandExecutor implements CommandExecutor {
 	    					if (game.starter == playerId) {
 								game.stopGame();
 							} else {
-								plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("not_starter").toString());
+								plugin.sendPlayer(player, plugin.msgs.get("not_starter").toString());
 							}
 						} else {
-							plugin.sendPlayer(player,ChatColor.RED + plugin.msgs.get("not_in_game").toString());
+							plugin.sendPlayer(player, plugin.msgs.get("not_in_game").toString());
 						}
 	    			} else {
-	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
+	    				plugin.sendPlayer(player, plugin.msgs.get("no_perm").toString());
 	    			}
 	    		} else if (args[0].equalsIgnoreCase("kick")){
 					if (sender.hasPermission("simpletag.create")) {
@@ -86,36 +86,36 @@ public class pluginCommandExecutor implements CommandExecutor {
 									Player playerToKick = plugin.getOnlinePlayer(args[1]);
 									if(playerToKick != null) {
 										plugin.leaveGame(playerToKick);
-										plugin.sendPlayer(playerToKick, ChatColor.RED + plugin.msgs.get("kicked").toString());
+										plugin.sendPlayer(playerToKick, plugin.msgs.get("kicked").toString());
 									} else {
-										plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("not_online").toString());
+										plugin.sendPlayer(player, plugin.msgs.get("not_online").toString());
 									}
 								} else {
-									plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("not_starter").toString());
+									plugin.sendPlayer(player, plugin.msgs.get("not_starter").toString());
 								}
 							} else {
-								plugin.sendPlayer(player,ChatColor.RED + plugin.msgs.get("not_in_game").toString());
+								plugin.sendPlayer(player, plugin.msgs.get("not_in_game").toString());
 							}
 						} else {
-							plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("need_player").toString());
+							plugin.sendPlayer(player, plugin.msgs.get("need_player").toString());
 						}
 					} else {
-						plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
+						plugin.sendPlayer(player, plugin.msgs.get("no_perm").toString());
 					}
 				} else if (args[0].equalsIgnoreCase("join")){
 					if (sender.hasPermission("simpletag.play")) {
 	    				if (args.length > 1) {
 			    			if(plugin.isPlaying(playerId)) {
-			    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("already_playing").toString());
+			    				plugin.sendPlayer(player, plugin.msgs.get("already_playing").toString());
 			    			} else {
 			    				Game game = plugin.findGame(ChatColor.stripColor(args[1]).toLowerCase());
 			    				if (game == null) {
-									plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_game").toString());
+									plugin.sendPlayer(player, plugin.msgs.get("no_game").toString());
 			    				} else {
 									plugin.debug(game.name);
 									game.addPlayer(playerId);
 									plugin.addPlayersGameEntry(playerId,game.name);
-									game.sendGamePlayers(ChatColor.GREEN + player.getDisplayName() + plugin.msgs.get("joined").toString());
+									game.sendGamePlayers(plugin.msgs.get("joined").toString().replace("%player%",player.getDisplayName()));
 									if (plugin.getConfig().getBoolean("setSurvival")) {
 										player.setGameMode(GameMode.SURVIVAL);
 									}
@@ -125,16 +125,16 @@ public class pluginCommandExecutor implements CommandExecutor {
 			    				}
 			    			}
 	    				} else {
-	    					plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("need_game").toString());
+	    					plugin.sendPlayer(player, plugin.msgs.get("need_game").toString());
 	    				}
 	    			} else {
-	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
+	    				plugin.sendPlayer(player, plugin.msgs.get("no_perm").toString());
 	    			}
 	    		} else if (args[0].equalsIgnoreCase("leave")){
 	    			if (sender.hasPermission("simpletag.play")) {
 						plugin.leaveGame(player);
 	    			} else {
-	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
+	    				plugin.sendPlayer(player, plugin.msgs.get("no_perm").toString());
 	    			}
 	    		} else if (args[0].equalsIgnoreCase("reload")){
 	    			if (sender.hasPermission("simpletag.admin")) {
@@ -145,13 +145,13 @@ public class pluginCommandExecutor implements CommandExecutor {
 		    				sender.sendMessage(ChatColor.RED + plugin.pluginName + " Reload Failed!");
 		    			}
 	    			} else {
-	    				plugin.sendPlayer(player, ChatColor.RED + plugin.msgs.get("no_perm").toString());
+	    				plugin.sendPlayer(player, plugin.msgs.get("no_perm").toString());
 	    			}
 	    		} else {
 	    			sender.sendMessage(helpMsg);
 	    		}
     		} else {
-    			sender.sendMessage(ChatColor.RED + plugin.msgs.get("no_console").toString());
+    			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.msgs.get("no_console").toString()));
     		}
     	}
 		return true;

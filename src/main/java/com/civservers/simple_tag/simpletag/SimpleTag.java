@@ -57,7 +57,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 				if(game.isIt(culpritId)) {
 					if(game.playerList.contains(victim.getUniqueId())) {
 						game.soundGamePlayers();
-						game.sendGamePlayers(ChatColor.GREEN.toString() + ChatColor.BOLD.toString() + victim.getDisplayName().toString() + msgs.get("tagged").toString());
+						game.sendGamePlayers(msgs.get("tagged").toString().replace("%player%",victim.getDisplayName()));
 						game.it = victim.getUniqueId();
 					}
 				}
@@ -88,7 +88,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 			}
 
 			if (!allowedCommands.contains(cmd)) {
-				sendPlayer(player, ChatColor.RED + msgs.get("no_cmds").toString());
+				sendPlayer(player, msgs.get("no_cmds").toString());
 				e.setCancelled(true);
 			}
     	}
@@ -108,24 +108,22 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 		if (game != null) {
 			game.removePlayer(playerId);
 			this.removePlayersGameEntry(player.getUniqueId());
-			sendPlayer(player,ChatColor.RED + msgs.get("leave").toString());
+			sendPlayer(player,msgs.get("leave").toString());
 
 			if (game.starter == playerId) {
-				String sMsg = ChatColor.BOLD.toString() + ChatColor.RED.toString() + player.getDisplayName() + msgs.get("has_left").toString();
-				game.sendGamePlayers(sMsg);
+				game.sendGamePlayers(msgs.get("has_left").toString().replace("%player%",player.getDisplayName()));
 				game.stopGame();
 			} else if (game.playerList.isEmpty()) {
-				sendPlayer(player,ChatColor.RED + msgs.get("stop").toString());
+				sendPlayer(player,msgs.get("stop").toString());
 				game.stopGame();
 			} else {
-				String sMsg = ChatColor.BOLD.toString() + ChatColor.RED.toString() + player.getDisplayName() + msgs.get("has_left").toString();
-				game.sendGamePlayers(sMsg);
+				game.sendGamePlayers(msgs.get("has_left").toString().replace("%player%",player.getDisplayName()));
 				if (game.isIt(playerId)) {
 					UUID newItPlayerId = game.newIt();
 					if(newItPlayerId != null) {
 						Player newItPlayer = getServer().getPlayer(newItPlayerId);
 						game.soundGamePlayers();
-						game.sendGamePlayers(newItPlayer.getDisplayName().toString() + msgs.get("is_it") );
+						game.sendGamePlayers(msgs.get("is_it").toString().replace("%player%",player.getDisplayName()));
 					} else {
 						System.out.println(ChatColor.RED + "[SimpleTag] Failed to get new player to be IT on current player leaving.");
 						game.stopGame();
@@ -133,7 +131,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 				}
 			}
 		} else {
-			sendPlayer(player,ChatColor.RED + msgs.get("not_in_game").toString());
+			sendPlayer(player,msgs.get("not_in_game").toString());
 		}
     }
 
@@ -169,7 +167,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 	}
 
     public void sendPlayer(Player p, String msg) {
-    	p.sendMessage(ChatColor.YELLOW + msgs.get("prefix").toString() + msg);
+    	p.sendMessage(ChatColor.translateAlternateColorCodes('&',msgs.get("prefix").toString() + msg));
     }
 
     public Player getOnlinePlayer(String username) {

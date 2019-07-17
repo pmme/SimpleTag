@@ -13,18 +13,20 @@ public class Game
 {
     private final SimpleTag plugin;
 
-    String name;
-    UUID starter;
-    List<UUID> playerList = new ArrayList<>();
-    UUID it;
+    private String name;
+    private UUID starter;
+    private List<UUID> playerList = new ArrayList<>();
+    private UUID it;
 
     public Game(SimpleTag plugin, Player player, String gameName) {
         this.plugin = plugin;
-        this.name = gameName;
+        this.name = ChatColor.stripColor(gameName).toLowerCase();
         this.starter = player.getUniqueId();
         this.it = this.starter;
         playerList.add(this.starter);
     }
+
+    public String getName() { return name; }
 
     public boolean isIt(UUID playerId) {
         return playerId == it;
@@ -44,6 +46,8 @@ public class Game
         return null;
     }
 
+    public boolean isStarter(UUID playerId) { return playerId == starter; }
+
     public void addPlayer(UUID playerId)
     {
         playerList.add(playerId);
@@ -54,16 +58,20 @@ public class Game
         playerList.remove(playerId);
     }
 
+    public boolean contains(UUID playerId) { return playerList.contains(playerId); }
+
+    public boolean hasNoPlayers() { return playerList.isEmpty(); }
+
     public void stopGame()
     {
         for(UUID playerId : playerList) {
             Player player = plugin.getServer().getPlayer(playerId);
             if(player != null) {
-                plugin.sendPlayer(player, plugin.msgs.get("stop").toString());
-                plugin.removePlayersGameEntry(playerId);
+                plugin.sendMessage(player, plugin.msgs.get("stop").toString());
+                plugin.removeFromPlayersInGames(playerId);
             }
         }
-        plugin.games.remove(this.name);
+        plugin.removeGame(this);
     }
 
     public void soundGamePlayers()
@@ -82,7 +90,7 @@ public class Game
         for(UUID playerId : playerList) {
             Player player = plugin.getServer().getPlayer(playerId);
             if(player != null) {
-                plugin.sendPlayer(player, msg);
+                plugin.sendMessage(player, msg);
             }
         }
     }

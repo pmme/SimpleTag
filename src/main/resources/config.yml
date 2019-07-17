@@ -33,3 +33,4 @@ messages:
    need_player: '&cYou must specify a player (e.g. /stag kick Joe)'
    not_in_game: '&cYou are not in a game of tag'
    not_starter: '&cYou must have started the game to use that command'
+   game_exists: '&cA game by that name already exists'

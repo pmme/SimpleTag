@@ -1,11 +1,9 @@
 package com.civservers.simple_tag.simpletag;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,8 +18,8 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 	public Map<String, Object> msgs;
 	List<String> allowedCommands;
 
-	public Map<String,Game> games = new HashMap<>();
-	public Map<UUID,String> playersInGames = new HashMap<>();
+	private Map<String,Game> games = new HashMap<>();
+	private Map<UUID,String> playersInGames = new HashMap<>();
 
 	private void loadConfig() {
 		msgs = getConfig().getConfigurationSection("messages").getValues(true);
@@ -52,17 +50,17 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 			Player victim = (Player)event.getEntity();
 			UUID culpritId = ((Player)event.getDamager()).getUniqueId();
 
-			Game game = this.findGame(culpritId);
+			Game game = this.findPlayersGame(culpritId);
 			if(game != null) {
 				if(game.isIt(culpritId)) {
-					if(game.playerList.contains(victim.getUniqueId())) {
+					if(game.contains(victim.getUniqueId())) {
 						game.soundGamePlayers();
 						game.sendGamePlayers(msgs.get("tagged").toString().replace("%player%",victim.getDisplayName()));
-						game.it = victim.getUniqueId();
+						game.setIt(victim.getUniqueId());
 					}
 				}
 				//Cancel damage
-				if((boolean) getConfig().get("cancelPVPDamage")) {
+				if(getConfig().getBoolean("cancelPVPDamage")) {
 					event.setCancelled(true);
 				}
 			}
@@ -88,7 +86,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 			}
 
 			if (!allowedCommands.contains(cmd)) {
-				sendPlayer(player, msgs.get("no_cmds").toString());
+				sendMessage(player, msgs.get("no_cmds").toString());
 				e.setCancelled(true);
 			}
     	}
@@ -97,24 +95,24 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     public Game newGame(Player player, String gameName) {
 		UUID playerId = player.getUniqueId();
 		Game game = new Game(this, player, gameName);
-		games.put(game.name, game);
-		this.playersInGames.put(playerId, game.name);
+		this.games.put(game.getName(), game);
+		this.playersInGames.put(playerId, game.getName());
 		return game;
 	}
     
     public void leaveGame(Player player) {
 		UUID playerId = player.getUniqueId();
-    	Game game = this.findGame(playerId);
+    	Game game = this.findPlayersGame(playerId);
 		if (game != null) {
 			game.removePlayer(playerId);
-			this.removePlayersGameEntry(player.getUniqueId());
-			sendPlayer(player,msgs.get("leave").toString());
+			this.removeFromPlayersInGames(playerId);
+			sendMessage(player,msgs.get("leave").toString());
 
-			if (game.starter == playerId) {
+			if (game.isStarter(playerId)) {
 				game.sendGamePlayers(msgs.get("has_left").toString().replace("%player%",player.getDisplayName()));
 				game.stopGame();
-			} else if (game.playerList.isEmpty()) {
-				sendPlayer(player,msgs.get("stop").toString());
+			} else if (game.hasNoPlayers()) {
+				sendMessage(player,msgs.get("stop").toString());
 				game.stopGame();
 			} else {
 				game.sendGamePlayers(msgs.get("has_left").toString().replace("%player%",player.getDisplayName()));
@@ -123,7 +121,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 					if(newItPlayerId != null) {
 						Player newItPlayer = getServer().getPlayer(newItPlayerId);
 						game.soundGamePlayers();
-						game.sendGamePlayers(msgs.get("is_it").toString().replace("%player%",player.getDisplayName()));
+						game.sendGamePlayers(msgs.get("is_it").toString().replace("%player%",newItPlayer.getDisplayName()));
 					} else {
 						System.out.println(ChatColor.RED + "[SimpleTag] Failed to get new player to be IT on current player leaving.");
 						game.stopGame();
@@ -131,7 +129,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 				}
 			}
 		} else {
-			sendPlayer(player,msgs.get("not_in_game").toString());
+			sendMessage(player,msgs.get("not_in_game").toString());
 		}
     }
 
@@ -139,7 +137,7 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 		return playersInGames.containsKey(playerId);
 	}
 
-	public Game findGame(UUID playerId) {
+	public Game findPlayersGame(UUID playerId) {
     	debug(playerId.toString());
 		String gameId = playersInGames.get(playerId);
 		if(gameId != null) {
@@ -148,17 +146,21 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 				return game;
 			} else {
 				System.out.println(ChatColor.RED + "[SimpleTag] Failed to get game from game ID");
-				this.removePlayersGameEntry(playerId);
+				this.removeFromPlayersInGames(playerId);
 			}
 		}
 		return null;
     }
 
-    public Game findGame(String gameId) {
-		return games.get(gameId);
+    public Game findGameById(String gameId) {
+		return games.get(ChatColor.stripColor(gameId).toLowerCase());
 	}
 
-    public void removePlayersGameEntry(UUID playerId) {
+	public void removeGame(Game game) {
+		games.remove(game.getName());
+	}
+
+    public void removeFromPlayersInGames(UUID playerId) {
 		playersInGames.remove(playerId);
 	}
 
@@ -166,14 +168,14 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 		playersInGames.put(playerId, gameId);
 	}
 
-    public void sendPlayer(Player p, String msg) {
+    public void sendMessage(CommandSender p, String msg) {
     	p.sendMessage(ChatColor.translateAlternateColorCodes('&',msgs.get("prefix").toString() + msg));
     }
 
     public Player getOnlinePlayer(String username) {
-		String usernameLower = username.toLowerCase();
+		String usernameLower = ChatColor.stripColor(username).toLowerCase();
 		for(Player player : this.getServer().getOnlinePlayers()) {
-			if(usernameLower.equals( ChatColor.stripColor(player.getDisplayName()).toLowerCase())) {
+			if(usernameLower.equals(ChatColor.stripColor(player.getDisplayName()).toLowerCase())) {
 				return player;
 			}
 		}

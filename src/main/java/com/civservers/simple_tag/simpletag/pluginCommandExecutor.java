@@ -21,7 +21,7 @@ public class pluginCommandExecutor implements CommandExecutor, TabCompleter {
 			ChatColor.GREEN + "" + ChatColor.BOLD + "Please try one of these player comamnds:",
 			ChatColor.RESET + "" + ChatColor.GREEN + " simpletag start <game> | join <game> | leave | stop | kick <player>",
 			ChatColor.YELLOW + "" + ChatColor.BOLD + "or one of these admin commands:",
-			ChatColor.RESET + "" + ChatColor.YELLOW + " /simpletag reload"
+			ChatColor.RESET + "" + ChatColor.YELLOW + " /simpletag reload | endall"
 	};
 
 	private static final String[] firstArguments = {
@@ -30,6 +30,7 @@ public class pluginCommandExecutor implements CommandExecutor, TabCompleter {
 			"kick",
 			"join",
 			"leave",
+			"endall",
 			"reload"
 	};
 	private static final String[] firstArgumentsPermissions = {
@@ -38,6 +39,7 @@ public class pluginCommandExecutor implements CommandExecutor, TabCompleter {
 			"simpletag.create",
 			"simpletag.play",
 			"simpletag.play",
+			"simpletag.admin",
 			"simpletag.admin"
 	};
 
@@ -86,6 +88,13 @@ public class pluginCommandExecutor implements CommandExecutor, TabCompleter {
 					} else {
 						sender.sendMessage(ChatColor.RED + plugin.pluginName + " Reload Failed!");
 					}
+				} else {
+					plugin.sendMessage(sender, plugin.msgs.get("no_perm").toString());
+				}
+			} else if (args[0].equalsIgnoreCase("endall")) {
+				if (sender.hasPermission("simpletag.admin")) {
+					plugin.endAll();
+					plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&',plugin.msgs.get("prefix").toString() + plugin.msgs.get("endall_broadcast").toString()));
 				} else {
 					plugin.sendMessage(sender, plugin.msgs.get("no_perm").toString());
 				}

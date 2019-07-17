@@ -192,12 +192,16 @@ public final class SimpleTag extends JavaPlugin implements Listener {
     	}
     }
 
+    public void endAll() {
+        playersInGames.clear();
+        games.clear();
+    }
+
     public boolean reload() {
+        this.endAll();
 		reloadConfig();
 		loadConfig();
-		playersInGames.clear();
-		games.clear();
-		return true;     
+		return true;
     }
 
 }

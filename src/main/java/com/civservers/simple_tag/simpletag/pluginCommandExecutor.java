@@ -10,9 +10,10 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public class pluginCommandExecutor implements CommandExecutor {
+public class pluginCommandExecutor implements CommandExecutor, TabCompleter {
 	private final SimpleTag plugin;
 	
 	private String[] helpMsg = {
@@ -23,8 +24,52 @@ public class pluginCommandExecutor implements CommandExecutor {
 			ChatColor.RESET + "" + ChatColor.YELLOW + " /simpletag reload"
 	};
 
+	private static final String[] firstArguments = {
+			"start",
+			"stop",
+			"kick",
+			"join",
+			"leave",
+			"reload"
+	};
+	private static final String[] firstArgumentsPermissions = {
+			"simpletag.create",
+			"simpletag.create",
+			"simpletag.create",
+			"simpletag.play",
+			"simpletag.play",
+			"simpletag.admin"
+	};
+
 	public pluginCommandExecutor(SimpleTag plugin) {
 		this.plugin = plugin;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args)
+	{
+		if(args.length == 1) {
+			String arg0lower = args[0].toLowerCase();
+			List<String> matchingFirstArguments = new ArrayList<>();
+			for(int i = 0; i < firstArguments.length; ++i) {
+				if(arg0lower.isEmpty() || firstArguments[i].startsWith(arg0lower)) {
+					if(commandSender.hasPermission(firstArgumentsPermissions[i])) {
+						matchingFirstArguments.add(firstArguments[i]);
+					}
+				}
+			}
+			return matchingFirstArguments;
+		}
+		if(args.length == 2) {
+			String arg0lower = args[0].toLowerCase();
+			if(arg0lower.equals("join")) {
+				return plugin.getGameNames();
+			}
+			if(arg0lower.equals("kick")) {
+				return null;    // null return lets server display player names.
+			}
+		}
+		return Collections.emptyList();
 	}
 
 	@Override	

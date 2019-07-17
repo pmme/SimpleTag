@@ -160,6 +160,10 @@ public final class SimpleTag extends JavaPlugin implements Listener {
 		games.remove(game.getName());
 	}
 
+	public List<String> getGameNames() {
+		return new ArrayList<>(games.keySet());
+	}
+
     public void removeFromPlayersInGames(UUID playerId) {
 		playersInGames.remove(playerId);
 	}
